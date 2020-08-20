@@ -24,8 +24,8 @@ namespace Hospital.Controllers
         {
             return Ok(_unitOfWork.Rooms.GetAll().ToList());
         }
-        [HttpGet]
-        public ActionResult<Room> GetById(int id)
+        [HttpGet("{id}")]
+        public ActionResult<Room> GetById([FromRoute]int id)
         {
             try
             {
@@ -33,11 +33,11 @@ namespace Hospital.Controllers
             }
             catch (Exception)
             {
-                return NotFound();
+                return NotFound("Not Found");
             }
         }
         [HttpPost]
-        public ActionResult<Room> Add(Room room)
+        public ActionResult<Room> Add([FromBody] Room room)
         {
             try
             {
@@ -51,7 +51,7 @@ namespace Hospital.Controllers
             }
         }
         [HttpPut]
-        public ActionResult<Room> Edit(Room room)
+        public ActionResult<Room> Edit([FromBody]Room room)
         {
             try
             {
@@ -64,8 +64,8 @@ namespace Hospital.Controllers
                 return BadRequest();
             }
         }
-        [HttpDelete]
-        public ActionResult RemoveById(int id)
+        [HttpDelete("{id}")]
+        public ActionResult RemoveById([FromRoute]int id)
         {
             try
             {

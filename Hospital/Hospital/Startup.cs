@@ -1,18 +1,12 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using Core.Abstractions;
 using DAL;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.HttpsPolicy;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.OpenApi.Models;
 
 namespace Hospital
 {
@@ -28,10 +22,15 @@ namespace Hospital
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddCors((c)=>c.AddPolicy("AllowEverything", (builder)=>builder.AllowAnyMethod().AllowAnyOrigin().AllowAnyHeader()));
             services.AddControllers();
             string connectionString = Configuration.GetConnectionString("MyServer");
-            services.AddDbContext<HospitalContext>((options)=>options.UseSqlServer(connectionString));
+            services.AddDbContext<HospitalContext>((options)=>options.UseSqlite(connectionString));
             services.AddScoped<IUnitOfWork, UnitOfWork>();
+            services.AddSwaggerGen((c)=>c.SwaggerDoc("v1", new OpenApiInfo { 
+                Title = "HospitalAPI",
+                Version = "v1"
+            }));
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -43,6 +42,12 @@ namespace Hospital
             }
 
             app.UseHttpsRedirection();
+
+            app.UseCors("AllowEverything");
+
+            app.UseSwagger();
+
+            app.UseSwaggerUI((c) =>c.SwaggerEndpoint("/swagger/v1/swagger.json", "HospitalAPI"));
 
             app.UseRouting();
 

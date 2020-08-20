@@ -24,8 +24,8 @@ namespace Hospital.Controllers
         {
             return Ok(_unitOfWork.Patients.GetAll().ToList());
         }
-        [HttpGet]
-        public ActionResult<Patient> GetById(int id)
+        [HttpGet("{id}")]
+        public ActionResult<Patient> GetById([FromRoute] int id)
         {
             try
             {
@@ -33,15 +33,15 @@ namespace Hospital.Controllers
             }
             catch (Exception)
             {
-                return NotFound();
+                return NotFound("Not Found");
             }
         }
         [HttpPost]
-        public ActionResult<Patient> Add(Patient patient)
+        public ActionResult<Patient> Add([FromBody] Patient patient)
         {
             try
             {
-                Patient newPatient =_unitOfWork.Patients.Add(patient);
+                Patient newPatient = _unitOfWork.Patients.Add(patient);
                 _unitOfWork.SaveChanges();
                 return Ok(newPatient);
             }
@@ -51,7 +51,7 @@ namespace Hospital.Controllers
             }
         }
         [HttpPut]
-        public ActionResult<Patient> Edit(Patient patient)
+        public ActionResult<Patient> Edit([FromBody] Patient patient)
         {
             try
             {
@@ -64,8 +64,8 @@ namespace Hospital.Controllers
                 return BadRequest();
             }
         }
-        [HttpDelete]
-        public ActionResult RemoveById(int id)
+        [HttpDelete("{id}")]
+        public ActionResult RemoveById([FromRoute] int id)
         {
             try
             {
